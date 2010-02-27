@@ -1,0 +1,29 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  server_audio_id: 1
+  original_url: MyString
+  error_downloading: false
+  error_downloading_message: MyText
+  error_encoding: false
+  error_encoding_message: MyText
+  error_uploading: false
+  error_uploading_message: MyText
+  started_download: 2010-02-26 17:58:25
+  started_encoding: 2010-02-26 17:58:25
+  started_upload: 2010-02-26 17:58:25
+  completed_at: 2010-02-26 17:58:25
+
+two:
+  server_audio_id: 1
+  original_url: MyString
+  error_downloading: false
+  error_downloading_message: MyText
+  error_encoding: false
+  error_encoding_message: MyText
+  error_uploading: false
+  error_uploading_message: MyText
+  started_download: 2010-02-26 17:58:25
+  started_encoding: 2010-02-26 17:58:25
+  started_upload: 2010-02-26 17:58:25
+  completed_at: 2010-02-26 17:58:25

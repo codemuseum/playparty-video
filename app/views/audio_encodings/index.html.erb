@@ -1,0 +1,42 @@
+<h1>Listing audio_encodings</h1>
+
+<table>
+  <tr>
+    <th>Server audio</th>
+    <th>Original url</th>
+    <th>Error downloading</th>
+    <th>Error downloading message</th>
+    <th>Error encoding</th>
+    <th>Error encoding message</th>
+    <th>Error uploading</th>
+    <th>Error uploading message</th>
+    <th>Started download</th>
+    <th>Started encoding</th>
+    <th>Started upload</th>
+    <th>Completed at</th>
+  </tr>
+
+<% @audio_encodings.each do |audio_encoding| %>
+  <tr>
+    <td><%=h audio_encoding.server_audio_id %></td>
+    <td><%=h audio_encoding.original_url %></td>
+    <td><%=h audio_encoding.error_downloading %></td>
+    <td><%=h audio_encoding.error_downloading_message %></td>
+    <td><%=h audio_encoding.error_encoding %></td>
+    <td><%=h audio_encoding.error_encoding_message %></td>
+    <td><%=h audio_encoding.error_uploading %></td>
+    <td><%=h audio_encoding.error_uploading_message %></td>
+    <td><%=h audio_encoding.started_download %></td>
+    <td><%=h audio_encoding.started_encoding %></td>
+    <td><%=h audio_encoding.started_upload %></td>
+    <td><%=h audio_encoding.completed_at %></td>
+    <td><%= link_to 'Show', audio_encoding %></td>
+    <td><%= link_to 'Edit', edit_audio_encoding_path(audio_encoding) %></td>
+    <td><%= link_to 'Destroy', audio_encoding, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New audio_encoding', new_audio_encoding_path %>

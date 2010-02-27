@@ -1,0 +1,63 @@
+<p>
+  <b>Server audio:</b>
+  <%=h @audio_encoding.server_audio_id %>
+</p>
+
+<p>
+  <b>Original url:</b>
+  <%=h @audio_encoding.original_url %>
+</p>
+
+<p>
+  <b>Error downloading:</b>
+  <%=h @audio_encoding.error_downloading %>
+</p>
+
+<p>
+  <b>Error downloading message:</b>
+  <%=h @audio_encoding.error_downloading_message %>
+</p>
+
+<p>
+  <b>Error encoding:</b>
+  <%=h @audio_encoding.error_encoding %>
+</p>
+
+<p>
+  <b>Error encoding message:</b>
+  <%=h @audio_encoding.error_encoding_message %>
+</p>
+
+<p>
+  <b>Error uploading:</b>
+  <%=h @audio_encoding.error_uploading %>
+</p>
+
+<p>
+  <b>Error uploading message:</b>
+  <%=h @audio_encoding.error_uploading_message %>
+</p>
+
+<p>
+  <b>Started download:</b>
+  <%=h @audio_encoding.started_download %>
+</p>
+
+<p>
+  <b>Started encoding:</b>
+  <%=h @audio_encoding.started_encoding %>
+</p>
+
+<p>
+  <b>Started upload:</b>
+  <%=h @audio_encoding.started_upload %>
+</p>
+
+<p>
+  <b>Completed at:</b>
+  <%=h @audio_encoding.completed_at %>
+</p>
+
+
+<%= link_to 'Edit', edit_audio_encoding_path(@audio_encoding) %> |
+<%= link_to 'Back', audio_encodings_path %>

@@ -1,0 +1,60 @@
+<h1>Editing audio_encoding</h1>
+
+<% form_for(@audio_encoding) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :server_audio_id %><br />
+    <%= f.text_field :server_audio_id %>
+  </p>
+  <p>
+    <%= f.label :original_url %><br />
+    <%= f.text_field :original_url %>
+  </p>
+  <p>
+    <%= f.label :error_downloading %><br />
+    <%= f.check_box :error_downloading %>
+  </p>
+  <p>
+    <%= f.label :error_downloading_message %><br />
+    <%= f.text_area :error_downloading_message %>
+  </p>
+  <p>
+    <%= f.label :error_encoding %><br />
+    <%= f.check_box :error_encoding %>
+  </p>
+  <p>
+    <%= f.label :error_encoding_message %><br />
+    <%= f.text_area :error_encoding_message %>
+  </p>
+  <p>
+    <%= f.label :error_uploading %><br />
+    <%= f.check_box :error_uploading %>
+  </p>
+  <p>
+    <%= f.label :error_uploading_message %><br />
+    <%= f.text_area :error_uploading_message %>
+  </p>
+  <p>
+    <%= f.label :started_download %><br />
+    <%= f.datetime_select :started_download %>
+  </p>
+  <p>
+    <%= f.label :started_encoding %><br />
+    <%= f.datetime_select :started_encoding %>
+  </p>
+  <p>
+    <%= f.label :started_upload %><br />
+    <%= f.datetime_select :started_upload %>
+  </p>
+  <p>
+    <%= f.label :completed_at %><br />
+    <%= f.datetime_select :completed_at %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @audio_encoding %> |
+<%= link_to 'Back', audio_encodings_path %>

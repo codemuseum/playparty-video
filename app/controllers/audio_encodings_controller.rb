@@ -42,16 +42,19 @@ class AudioEncodingsController < ApplicationController
   # POST /audio_encodings
   # POST /audio_encodings.xml
   def create
-    @audio_encoding = AudioEncoding.new(params[:audio_encoding])
-
+    @audio_encoding = AudioEncoding.find_audio_to_encode
+    
+    # Quit unless there's an audio encoding
+    unless @audio_encoding
+      respond_to { |format| format.json {render :json => ''} }
+      return
+    end
+    
     respond_to do |format|
-      if @audio_encoding.save
-        flash[:notice] = 'AudioEncoding was successfully created.'
-        format.html { redirect_to(@audio_encoding) }
-        format.xml  { render :xml => @audio_encoding, :status => :created, :location => @audio_encoding }
+      if @audio_encoding.encode_to_mp3
+        format.json  { render :json => @audio_encoding, :status => :created, :location => @audio_encoding }
       else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @audio_encoding.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @audio_encoding.errors, :status => :unprocessable_entity }
       end
     end
   end

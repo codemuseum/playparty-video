@@ -1,4 +1,6 @@
 class AudioEncodingsController < ApplicationController
+  protect_from_forgery :except => [:create]
+
   # GET /audio_encodings
   # GET /audio_encodings.xml
   def index

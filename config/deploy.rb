@@ -18,6 +18,11 @@ namespace :deploy do
     run "touch #{current_path}/tmp/restart.txt"
   end
 
+  desc "Make symlink for image downloads" 
+  task :symlink_downloads do
+    run "ln -nfs #{shared_path}/public/images/downloads #{release_path}/public/images/downloads" 
+  end
+  
   desc "Make symlink for database.yml" 
   task :symlink_dbyaml do
     run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml" 
@@ -32,5 +37,6 @@ end
 
 after 'deploy:setup', 'deploy:create_dbyaml'
 after 'deploy:update_code', 'deploy:symlink_dbyaml'
+after 'deploy:symlink_downloads', 'deploy:symlink_dbyaml'
 
 after "deploy", "deploy:cleanup"

@@ -37,6 +37,6 @@ end
 
 after 'deploy:setup', 'deploy:create_dbyaml'
 after 'deploy:update_code', 'deploy:symlink_dbyaml'
-after 'deploy:symlink_downloads', 'deploy:symlink_dbyaml'
+after 'deploy:update_code', 'deploy:symlink_downloads'
 
 after "deploy", "deploy:cleanup"

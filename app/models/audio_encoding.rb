@@ -5,6 +5,7 @@ class AudioEncoding < ActiveRecord::Base
   SERVER_URL = 'http://partyplay.heroku.com/mp3s/new.json'
   MP3_UPLOAD_URL = 'http://partyplay.heroku.com/mp3s'
   DOWNLOAD_PATH = "#{RAILS_ROOT}/public/images/downloads"
+  CREDS = '9f0083af27bff83ce5d4841716f5ec2f'
   
   validates_uniqueness_of :server_audio_id
   
@@ -37,7 +38,7 @@ class AudioEncoding < ActiveRecord::Base
     
     # Upload back to server and write started_upload
     update_attribute(:started_upload, Time.now)
-    RestClient.post MP3_UPLOAD_URL, :upload => { :id => server_audio_id, :mp3 => File.new("#{working_dir}/#{original_file}.mp3")}
+    RestClient.post MP3_UPLOAD_URL, :upload => { :id => server_audio_id, :mp3 => File.new("#{working_dir}/#{original_file}.mp3")}, :credentials => { :key => CREDS }
     
     # Write completed_at
     update_attribute(:completed_at, Time.now)

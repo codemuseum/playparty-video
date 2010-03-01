@@ -38,7 +38,7 @@ class AudioEncoding < ActiveRecord::Base
     
     # Upload back to server and write started_upload
     update_attribute(:started_upload, Time.now)
-    RestClient.post MP3_UPLOAD_URL, :upload => { :id => server_audio_id, :mp3 => File.new("#{working_dir}/#{original_file}.mp3")}, :credentials => { :key => CREDS }
+    RestClient.post MP3_UPLOAD_URL, :upload_id => server_audio_id, :upload => { :mp3 => File.new("#{working_dir}/#{original_file}.mp3")}, :credentials => { :key => CREDS }
     
     # Write completed_at
     update_attribute(:completed_at, Time.now)

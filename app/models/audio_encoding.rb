@@ -16,7 +16,7 @@ class AudioEncoding < ActiveRecord::Base
       server_audio_id = upload['upload']['id']
       ae = AudioEncoding.find_by_id(server_audio_id)
       unless ae
-        return AudioEncoding.create!(:server_audio_id => server_audio_id, :original_url => upload['upload']['original_attachment_url'])
+        return AudioEncoding.create!(:server_audio_id => server_audio_id, :original_url => upload['upload']['original_attachment_url'].split('?').first)
       end
     end
     nil
@@ -27,7 +27,8 @@ class AudioEncoding < ActiveRecord::Base
     update_attribute(:started_download, Time.now)
     working_dir = "#{DOWNLOAD_PATH}/#{self.id}"
     FileUtils.mkdir(working_dir)
-    original_file = `wget --directory-prefix=#{working_dir} #{self.original_url} `
+    original_file = original_url.split('/').last.split('?').first
+    `wget --directory-prefix=#{working_dir} #{self.original_url} `
   
     # Encode download and write started_encoding
     update_attribute(:started_encoding, Time.now)

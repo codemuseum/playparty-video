@@ -1,4 +1,10 @@
 require 'rubygems'
 require 'spec'
 
-require File.dirname(__FILE__) + '/../lib/rest_client'
+begin
+  require "ruby-debug"
+rescue LoadError
+  # NOP, ignore
+end
+
+require File.dirname(__FILE__) + '/../lib/restclient'

@@ -39,8 +39,10 @@ class AudioEncoding < ActiveRecord::Base
     RestClient.post MP3_UPLOAD_URL, :upload => { :id => server_audio_id, :mp3 => File.new("#{working_dir}/#{original_file}.mp3")}
     
     # Write completed_at
+    update_attribute(:completed_at, Time.now)
     
     # Remove files
+    FileUtils.rm(["#{working_dir}/#{original_file}", "#{working_dir}/#{original_file}.aiff", "#{working_dir}/#{original_file}.mp3"])
     
     return true
   end

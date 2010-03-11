@@ -51,7 +51,7 @@ class AudioEncodingsController < ApplicationController
     end
     
     respond_to do |format|
-      if @audio_encoding.encode_to_mp3
+      if @audio_encoding.encode_mp3_and_video
         format.json  { render :json => @audio_encoding, :status => :created, :location => @audio_encoding }
       else
         format.json  { render :json => @audio_encoding.errors, :status => :unprocessable_entity }

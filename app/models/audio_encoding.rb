@@ -1,11 +1,14 @@
 require 'open-uri'
 require 'rest_client'
+require 'RMagick'
 
 class AudioEncoding < ActiveRecord::Base
-  SERVER_URL = 'http://partyplay.heroku.com/mp3s/new.json'
-  MP3_UPLOAD_URL = 'http://partyplay.heroku.com/mp3s'
+  SERVER_URL = 'http://partyplay.heroku.com/encodings/new.json'
+  ENCODING_UPLOAD_URL = 'http://partyplay.heroku.com/encodings'
   DOWNLOAD_PATH = "#{RAILS_ROOT}/public/images/downloads"
   CREDS = '9f0083af27bff83ce5d4841716f5ec2f'
+  MILLISECONDS_PER_FRAME = 33
+  FRAMES_PER_SECOND = 30
   
   validates_uniqueness_of :server_audio_id
   
@@ -23,30 +26,86 @@ class AudioEncoding < ActiveRecord::Base
     nil
   end
   
-  def encode_to_mp3
-    # Download original and write started_download
+  def encode_mp3_and_video
+    # Download original audio and write started_download
     update_attribute(:started_download, Time.now)
     working_dir = "#{DOWNLOAD_PATH}/#{self.id}"
+    working_video_dir = "#{working_dir}/video"
     FileUtils.mkdir(working_dir)
     original_file = original_url.split('/').last.split('?').first
     `wget --directory-prefix=#{working_dir} #{self.original_url} `
-  
-    # Encode download and write started_encoding
+    
+    mp3_file = "#{working_dir}/#{original_file}.mp3"
+    avi_file = nil
+    
+    
+    # Encode audio download and write started_encoding
     update_attribute(:started_encoding, Time.now)
-    aiff_file = `sndfile-convert #{working_dir}/#{original_file} #{working_dir}/#{original_file}.aiff`
-    mp3_file = `sox #{working_dir}/#{original_file}.aiff #{working_dir}/#{original_file}.mp3`
+    `sndfile-convert #{working_dir}/#{original_file} #{working_dir}/#{original_file}.aiff`
+    `sox #{working_dir}/#{original_file}.aiff #{mp3_file}`
+    
+    
+    # If there is any video file, encode that too
+    unless picture_coordinates.blank?
+      # set started_drawing and output frames
+      update_attribute(:started_drawing, Time.now)
+      count = ouput_video_frames(ActiveSupport::JSON.decode(picture_coordinates), working_video_dir)
+      logger.debug "Gathered #{count} frames for video #{id}"
+      
+      # set started_assembling_video, and merge all image frame files into a video
+      update_attribute(:started_assembling_video, Time.now)
+      `ffmpeg -qscale 2 -r #{FRAMES_PER_SECOND} -b 9600 -i #{working_video_dir}/%08d.png -i #{mp3_file} #{working_dir}/#{original_file}.avi`
+      avi_file = "#{working_dir}/#{original_file}.avi"
+      
+      FileUtils.rm Dir.glob("#{working_video_dir}/*.png")
+      
+      # set completed_video_at
+      update_attribute(:completed_video_at, Time.now)
+    end
     
     # Upload back to server and write started_upload
     update_attribute(:started_upload, Time.now)
-    RestClient.post MP3_UPLOAD_URL, :upload_id => server_audio_id, :upload => { :mp3 => File.new("#{working_dir}/#{original_file}.mp3")}, :credentials => { :key => CREDS }
+    if avi_file
+      RestClient.post ENCODING_UPLOAD_URL, :upload_id => server_audio_id, :upload => { :mp3 => File.new(mp3_file), :avi => File.new(avi_file) }, :credentials => { :key => CREDS }
+    else
+      RestClient.post ENCODING_UPLOAD_URL, :upload_id => server_audio_id, :upload => { :mp3 => File.new(mp3_file)}, :credentials => { :key => CREDS }
+    end
     
     # Write completed_at
     update_attribute(:completed_at, Time.now)
     
     # Remove files
-    FileUtils.rm(["#{working_dir}/#{original_file}", "#{working_dir}/#{original_file}.aiff", "#{working_dir}/#{original_file}.mp3"])
+    FileUtils.rm(["#{working_dir}/#{original_file}", "#{working_dir}/#{original_file}.aiff", mp3_file])
+    FileUtils.rm([avi_file]) if avi_file
     
     return true
+  end
+  
+  # Returns number of frames
+  def ouput_video_frames(coords_array, working_dir)
+    FileUtils.mkdir(working_dir)
+    canvas = Magick::Image.new(1024, 768)
+    draw = Magick::Draw.new
+    draw.stroke('blue')
+    draw.stroke_width(5)
+    draw.fill_opacity(0)
+    
+    frame = 0
+    (0..coords_array.size).each do |i|
+      draw.point(coords_array[i][0], coords_array[i][1])
+      draw.draw(canvas)
+      
+      # Calculate how many frames this point represents, and output each frame
+      frames = i + 1 == coords_array.size ? 1 : ((coords_array[i+1][2] - coords_array[i][2]) / MILLISECONDS_PER_FRAME).round # last frame vs. not last frame
+      
+      (0..frames).each do |f|
+        frame = frame + 1
+        filenum = "%08d" % frame
+        canvas.write("#{working_dir}/#{filenum}.png")
+      end
+    end
+    
+    return frame
   end
 
 end

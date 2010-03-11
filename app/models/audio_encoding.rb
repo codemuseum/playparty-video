@@ -17,7 +17,7 @@ class AudioEncoding < ActiveRecord::Base
       server_audio_id = upload['upload']['id']
       ae = AudioEncoding.find_by_id(server_audio_id)
       unless ae
-        return AudioEncoding.create!(:server_audio_id => server_audio_id, :original_url => upload['upload']['original_attachment_url'].split('?').first)
+        return AudioEncoding.create!(:server_audio_id => server_audio_id, :original_url => upload['upload']['original_attachment_url'].split('?').first, :picture_coordinates => upload['upload']['picture_coordinates'])
       end
     end
     nil

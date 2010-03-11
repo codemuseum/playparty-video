@@ -91,15 +91,15 @@ class AudioEncoding < ActiveRecord::Base
     draw.fill_opacity(0)
     
     frame = 0
-    (0..coords_array.size).each do |i|
+    (0...coords_array.size).each do |i|
       coords = coords_array[i]
       draw.point(coords[0], coords[1])
       draw.draw(canvas)
       
-      # Calculate how many frames this point represents, and output each frame
-      frames = i + 1 == coords_array.size ? 1 : ((coords_array[i+1][2] - coords[2]) / MILLISECONDS_PER_FRAME).round # last frame vs. not last frame
+      # Calculate how many frames this point represents, and output each frame, must cast to float to get correct rounding
+      frames = i + 1 == coords_array.size ? 1 : (1.0000 * (coords_array[i+1][2] - coords[2]) / MILLISECONDS_PER_FRAME).round # last frame vs. not last frame
       
-      (0..frames).each do |f|
+      (0...frames).each do |f|
         frame = frame + 1
         filenum = "%08d" % frame
         canvas.write("#{working_dir}/#{filenum}.png")

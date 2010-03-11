@@ -88,6 +88,7 @@ class AudioEncoding < ActiveRecord::Base
     canvas = Magick::Image.new(1024, 768)
     draw = Magick::Draw.new
     draw.stroke('blue')
+    draw.fill('blue')
     draw.stroke_width(5)
     draw.fill_opacity(0)
     

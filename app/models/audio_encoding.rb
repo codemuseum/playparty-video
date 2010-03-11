@@ -66,7 +66,7 @@ class AudioEncoding < ActiveRecord::Base
     # Upload back to server and write started_upload
     update_attribute(:started_upload, Time.now)
     if avi_file
-      RestClient.post ENCODING_UPLOAD_URL, :upload_id => server_audio_id, :upload => { :mp3 => File.new(mp3_file), :avi => File.new(avi_file) }, :credentials => { :key => CREDS }
+      RestClient.post ENCODING_UPLOAD_URL, :upload_id => server_audio_id, :upload => { :avi => File.new(avi_file) }, :credentials => { :key => CREDS }
     else
       RestClient.post ENCODING_UPLOAD_URL, :upload_id => server_audio_id, :upload => { :mp3 => File.new(mp3_file)}, :credentials => { :key => CREDS }
     end

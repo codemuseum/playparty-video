@@ -18,7 +18,7 @@ class AudioEncoding < ActiveRecord::Base
     # Find the first audio requiring encoding that's not already in the database
     @uploads.each do |upload|
       server_audio_id = upload['upload']['id']
-      ae = AudioEncoding.find_by_id(server_audio_id)
+      ae = AudioEncoding.find_by_server_audio_id(server_audio_id)
       unless ae
         return AudioEncoding.create!(:server_audio_id => server_audio_id, :original_url => upload['upload']['original_attachment_url'].split('?').first, :picture_coordinates => upload['upload']['picture_coordinates'])
       end
@@ -92,11 +92,12 @@ class AudioEncoding < ActiveRecord::Base
     
     frame = 0
     (0..coords_array.size).each do |i|
-      draw.point(coords_array[i][0], coords_array[i][1])
+      coords = coords_array[i]
+      draw.point(coords[0], coords[1])
       draw.draw(canvas)
       
       # Calculate how many frames this point represents, and output each frame
-      frames = i + 1 == coords_array.size ? 1 : ((coords_array[i+1][2] - coords_array[i][2]) / MILLISECONDS_PER_FRAME).round # last frame vs. not last frame
+      frames = i + 1 == coords_array.size ? 1 : ((coords_array[i+1][2] - coords[2]) / MILLISECONDS_PER_FRAME).round # last frame vs. not last frame
       
       (0..frames).each do |f|
         frame = frame + 1

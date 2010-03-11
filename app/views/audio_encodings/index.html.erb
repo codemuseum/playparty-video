@@ -15,11 +15,11 @@
     <th>Started upload</th>
     <th>Completed at</th>
     
-    <th>Picture Coordinates</th>
     <th>Started Drawing</th>
     <th>Started Started Assembling Video</th>
     <th>Started Merging Audio With Video</th>
     <th>Completed Video At</th>
+    <th>Picture Coordinates</th>
   </tr>
 
 <% @audio_encodings.each do |audio_encoding| %>
@@ -37,12 +37,13 @@
     <td><%=h audio_encoding.started_upload %></td>
     <td><%=h audio_encoding.completed_at %></td>
     
-    <td><%=h audio_encoding.picture_coordinates %></td>
     <td><%=h audio_encoding.started_drawing %></td>
     <td><%=h audio_encoding.started_assembling_video %></td>
     <td><%=h audio_encoding.started_merging_audio_with_video %></td>
     <td><%=h audio_encoding.completed_video_at %></td>
     
+    
+    <td><%=h audio_encoding.picture_coordinates %></td>
     
     <td><%= link_to 'Show', audio_encoding %></td>
     <td><%= link_to 'Edit', edit_audio_encoding_path(audio_encoding) %></td>

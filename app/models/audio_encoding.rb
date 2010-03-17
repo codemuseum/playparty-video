@@ -109,9 +109,10 @@ class AudioEncoding < ActiveRecord::Base
         draw.fill_opacity(0)
 
         draw.circle(coords[0].to_i, coords[1].to_i, coords[0].to_i, coords[1].to_i + 3)
-        draw.draw(canvas)
       end
-
+      
+      draw.draw(canvas)
+      
       # Calculate how many frames this point represents, and output each frame, must cast to float to get correct rounding
       frames = i + 1 == coords_array.size ? 1 : (1.0000 * (coords_array[i+1][2] - coords[2]) / MILLISECONDS_PER_FRAME).round # last frame vs. not last frame
 

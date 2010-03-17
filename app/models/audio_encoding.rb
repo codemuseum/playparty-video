@@ -57,8 +57,8 @@ class AudioEncoding < ActiveRecord::Base
       `ffmpeg -qscale 2 -r #{FRAMES_PER_SECOND} -b 9600 -i #{working_video_dir}/%08d.png -i #{mp3_file} #{working_dir}/#{original_file}.avi`
       avi_file = "#{working_dir}/#{original_file}.avi"
       
-      # DEBUG:: Don't remove these so we can inspect the output
-      # FileUtils.rm Dir.glob("#{working_video_dir}/*.png")
+      # Remove working files
+      FileUtils.rm Dir.glob("#{working_video_dir}/*.png")
       
       # set completed_video_at
       update_attribute(:completed_video_at, Time.now)
@@ -76,8 +76,10 @@ class AudioEncoding < ActiveRecord::Base
     update_attribute(:completed_at, Time.now)
     
     # Remove files
-    FileUtils.rm(["#{working_dir}/#{original_file}", "#{working_dir}/#{original_file}.aiff", mp3_file])
-    FileUtils.rm([avi_file]) if avi_file
+    FileUtils.rm Dir.glob("#{working_video_dir}/*.caf")
+    FileUtils.rm Dir.glob("#{working_video_dir}/*.caf.*")
+    # FileUtils.rm(["#{working_dir}/#{original_file}", "#{working_dir}/#{original_file}.aiff", mp3_file])
+    # FileUtils.rm([avi_file]) if avi_file
     
     return true
   end

@@ -87,7 +87,9 @@ class AudioEncoding < ActiveRecord::Base
   # Returns number of frames
   def ouput_video_frames(coords_array, working_dir)
     FileUtils.mkdir(working_dir)
-    canvas = Magick::Image.new(1024, 768)
+    canvas = Magick::Image.new(1024, 768) do
+      self.background_color = 'white'
+    end
     # draw = Magick::Draw.new ## Don't just use a single draw object, because it slows things down.
 
     frame = 0
@@ -96,7 +98,10 @@ class AudioEncoding < ActiveRecord::Base
       draw = Magick::Draw.new
 
       if (coords[0] == 'clear')
-        canvas = Magick::Image.new(1024, 768) # Open up a new blank canvas for the clear command
+        # Open up a new blank canvas for the clear command
+        canvas = Magick::Image.new(1024, 768) do
+          self.background_color = 'white'
+        end 
       else
         draw.stroke('blue')
         draw.fill('blue')

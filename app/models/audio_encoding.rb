@@ -96,18 +96,21 @@ class AudioEncoding < ActiveRecord::Base
     (0...coords_array.size).each do |i|
       coords = coords_array[i]
       draw = Magick::Draw.new
+      draw.stroke_width(3)
+      draw.fill_opacity(0)
 
       if (coords[0] == 'clear')
         # Open up a new blank canvas for the clear command
         canvas = Magick::Image.new(1024, 768) do
           self.background_color = 'white'
         end 
+        # Try to prevent odd gray lines over background
+        draw.stroke('white')
+        draw.fill('white')
+        draw.circle(0, 0, 3, 3)
       else
         draw.stroke('blue')
         draw.fill('blue')
-        draw.stroke_width(3)
-        draw.fill_opacity(0)
-
         draw.circle(coords[0].to_i, coords[1].to_i, coords[0].to_i, coords[1].to_i + 3)
       end
       

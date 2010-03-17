@@ -76,8 +76,8 @@ class AudioEncoding < ActiveRecord::Base
     update_attribute(:completed_at, Time.now)
     
     # Remove files
-    FileUtils.rm Dir.glob("#{working_video_dir}/*.caf")
-    FileUtils.rm Dir.glob("#{working_video_dir}/*.caf.*")
+    FileUtils.rm Dir.glob("#{working_dir}/*.caf")
+    FileUtils.rm Dir.glob("#{working_dir}/*.caf.*")
     # FileUtils.rm(["#{working_dir}/#{original_file}", "#{working_dir}/#{original_file}.aiff", mp3_file])
     # FileUtils.rm([avi_file]) if avi_file
     

@@ -89,15 +89,16 @@ class AudioEncoding < ActiveRecord::Base
     FileUtils.mkdir(working_dir)
     canvas = Magick::Image.new(1024, 768)
     # draw = Magick::Draw.new ## Don't just use a single draw object, because it slows things down.
-    draw.stroke('blue')
-    draw.fill('blue')
-    draw.stroke_width(3)
-    draw.fill_opacity(0)
     
     frame = 0
     (0...coords_array.size).each do |i|
       coords = coords_array[i]
       draw = Magick::Draw.new
+      draw.stroke('blue')
+      draw.fill('blue')
+      draw.stroke_width(3)
+      draw.fill_opacity(0)
+      
       draw.circle(coords[0].to_i, coords[1].to_i, coords[0].to_i, coords[1].to_i + 3)
       draw.draw(canvas)
       

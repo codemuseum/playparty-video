@@ -85,6 +85,7 @@ class AudioEncoding < ActiveRecord::Base
   end
 
   # Returns number of frames
+  # Example coords array: [ [[71,66,378],[72,66,396]] , [[72,66,397],[76,70,412]] , ... ]
   def ouput_video_frames(coords_array, working_dir)
     FileUtils.mkdir(working_dir)
     canvas = Magick::Image.new(1024, 768) do
@@ -94,12 +95,14 @@ class AudioEncoding < ActiveRecord::Base
 
     frame = 0
     (0...coords_array.size).each do |i|
-      coords = coords_array[i]
+      tuple = coords_array[i]
+      start_point = tuple[0]
+      end_point = tuple[0]
       draw = Magick::Draw.new
       draw.stroke_width(3)
       draw.fill_opacity(0)
 
-      if (coords[0] == 'clear')
+      if start_point[0] == 'clear'
         # Open up a new blank canvas for the clear command
         canvas = Magick::Image.new(1024, 768) do
           self.background_color = 'white'
@@ -108,22 +111,72 @@ class AudioEncoding < ActiveRecord::Base
         draw.stroke('white')
         draw.fill('white')
         draw.circle(0, 0, 3, 3)
+        draw.draw(canvas)
       else
         draw.stroke('blue')
         draw.fill('blue')
-        draw.circle(coords[0].to_i, coords[1].to_i, coords[0].to_i, coords[1].to_i + 3)
+        # draw.circle(coords[0].to_i, coords[1].to_i, coords[0].to_i, coords[1].to_i + 3)
       end
       
-      draw.draw(canvas)
-      
-      # Calculate how many frames this point represents, and output each frame, must cast to float to get correct rounding
-      frames = i + 1 == coords_array.size ? 1 : (1.0000 * (coords_array[i+1][2] - coords[2]) / MILLISECONDS_PER_FRAME).round # last frame vs. not last frame
-
-      (0...frames).each do |f|
+      # if we need to output more frames to get to the first timestamp, just output that many frames
+      until start_point[2] <= frame * MILLISECONDS_PER_FRAME
         frame = frame + 1
         filenum = "%08d" % frame
         canvas.write("#{working_dir}/#{filenum}.png")
       end
+      
+      # [[71,66,378],[72,66,396]] , [[72,66,397],[76,70,412]] , ... ]
+      
+      # 3 possibilities:
+      last_drawn_point = start_point
+      
+      #   end_point timestamp > 1 frame
+      
+      while end_point[2] > ((frame+1) * MILLISECONDS_PER_FRAME)
+        # How far do we go in 1 frame?  A percentage of the total distance we're supposed to go in the remaing frames
+        percentage = 1.00000 / ((1.0000 * end_point[2] - frame * MILLISECONDS_PER_FRAME) / MILLISECONDS_PER_FRAME)
+        
+        # calculate the percentage between the previous frame and the future frame, and draw the line between that
+        next_point = [ 
+          (1.00000 * last_drawn_point[0] + ((end_point[0] - start_point[0]) * percentage)).round, 
+          (1.00000 * last_drawn_point[1] + ((end_point[1] - start_point[1]) * percentage)).round 
+        ]
+        
+        if start_point[0] != 'clear'
+          draw.line(last_drawn_point[0], last_drawn_point[1], next_point[0], next_point[1])
+        end
+        frame = frame + 1
+        filenum = "%08d" % frame
+        canvas.write("#{working_dir}/#{filenum}.png")
+        last_drawn_point = next_point
+      end
+        
+        
+      #   end_point timestamp == 1 frame
+      if end_point[2] == ((frame+1) * MILLISECONDS_PER_FRAME)
+        if start_point[0] != 'clear'
+          draw.line(last_drawn_point[0], last_drawn_point[1], end_point[0], end_point[1])
+        end
+        frame = frame + 1
+        filenum = "%08d" % frame
+        canvas.write("#{working_dir}/#{filenum}.png")
+      
+      #   end_point timestamp < 1 frame
+      else # end_point[2] < ((frame+1) * MILLISECONDS_PER_FRAME)
+        if start_point[0] != 'clear'
+          draw.line(last_drawn_point[0], last_drawn_point[1], end_point[0], end_point[1])
+        end
+      end
+      
+      
+      # Calculate how many frames this point represents, and output each frame, must cast to float to get correct rounding
+      # frames = i + 1 == coords_array.size ? 1 : (1.0000 * (coords_array[i+1][2] - coords[2]) / MILLISECONDS_PER_FRAME).round # last frame vs. not last frame
+      # 
+      # (0...frames).each do |f|
+      #   frame = frame + 1
+      #   filenum = "%08d" % frame
+      #   canvas.write("#{working_dir}/#{filenum}.png")
+      # end
     end
 
     return frame

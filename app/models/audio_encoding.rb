@@ -123,6 +123,7 @@ class AudioEncoding < ActiveRecord::Base
       until start_point[2] <= frame * MILLISECONDS_PER_FRAME
         frame = frame + 1
         filenum = "%08d" % frame
+        draw.draw(canvas)
         canvas.write("#{working_dir}/#{filenum}.png")
         
         draw = Magick::Draw.new
@@ -154,6 +155,7 @@ class AudioEncoding < ActiveRecord::Base
         end
         frame = frame + 1
         filenum = "%08d" % frame
+        draw.draw(canvas)
         canvas.write("#{working_dir}/#{filenum}.png")
         last_drawn_point = next_point
         
@@ -172,10 +174,13 @@ class AudioEncoding < ActiveRecord::Base
         end
         frame = frame + 1
         filenum = "%08d" % frame
+        draw.draw(canvas)
         canvas.write("#{working_dir}/#{filenum}.png")
         draw = Magick::Draw.new
         draw.stroke_width(3)
         draw.fill_opacity(0)
+        draw.stroke('blue')
+        draw.fill('blue')
 
       #   end_point timestamp < 1 frame
       else # end_point[2] < ((frame+1) * MILLISECONDS_PER_FRAME)

@@ -97,7 +97,7 @@ class AudioEncoding < ActiveRecord::Base
     (0...coords_array.size).each do |i|
       tuple = coords_array[i]
       start_point = tuple[0]
-      end_point = tuple[0]
+      end_point = tuple[1]
       draw = Magick::Draw.new
       draw.stroke_width(3)
       draw.fill_opacity(0)

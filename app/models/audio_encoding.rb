@@ -54,11 +54,11 @@ class AudioEncoding < ActiveRecord::Base
 
       # set started_assembling_video, and merge all image frame files into a video
       update_attribute(:started_assembling_video, Time.now)
-      `ffmpeg -qscale 2 -r #{FRAMES_PER_SECOND} -b 9600 -i #{working_video_dir}/%08d.png -i #{mp3_file} #{working_dir}/#{original_file}.avi`
+      `ffmpeg -qscale 2 -r #{FRAMES_PER_SECOND} -b 9600 -i #{working_video_dir}/%08d.gif -i #{mp3_file} #{working_dir}/#{original_file}.avi`
       avi_file = "#{working_dir}/#{original_file}.avi"
 
       # Remove working files
-      FileUtils.rm Dir.glob("#{working_video_dir}/*.png")
+      FileUtils.rm Dir.glob("#{working_video_dir}/*.gif")
 
       # set completed_video_at
       update_attribute(:completed_video_at, Time.now)
@@ -124,7 +124,7 @@ class AudioEncoding < ActiveRecord::Base
         frame = frame + 1
         filenum = "%08d" % frame
         draw.draw(canvas)
-        canvas.write("#{working_dir}/#{filenum}.png")
+        canvas.write("#{working_dir}/#{filenum}.gif")
         
         draw = Magick::Draw.new
         draw.stroke_width(3)
@@ -156,7 +156,7 @@ class AudioEncoding < ActiveRecord::Base
         frame = frame + 1
         filenum = "%08d" % frame
         draw.draw(canvas)
-        canvas.write("#{working_dir}/#{filenum}.png")
+        canvas.write("#{working_dir}/#{filenum}.gif")
         last_drawn_point = next_point
         
         draw = Magick::Draw.new
@@ -175,7 +175,7 @@ class AudioEncoding < ActiveRecord::Base
         frame = frame + 1
         filenum = "%08d" % frame
         draw.draw(canvas)
-        canvas.write("#{working_dir}/#{filenum}.png")
+        canvas.write("#{working_dir}/#{filenum}.gif")
         draw = Magick::Draw.new
         draw.stroke_width(3)
         draw.fill_opacity(0)
@@ -196,7 +196,7 @@ class AudioEncoding < ActiveRecord::Base
       # (0...frames).each do |f|
       #   frame = frame + 1
       #   filenum = "%08d" % frame
-      #   canvas.write("#{working_dir}/#{filenum}.png")
+      #   canvas.write("#{working_dir}/#{filenum}.gif")
       # end
     end
 

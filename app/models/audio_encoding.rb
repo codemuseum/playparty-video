@@ -94,13 +94,13 @@ class AudioEncoding < ActiveRecord::Base
     # draw = Magick::Draw.new ## Don't just use a single draw object, because it slows things down.
 
     frame = 0
+    draw = Magick::Draw.new
+    draw.stroke_width(3)
+    draw.fill_opacity(0)
     (0...coords_array.size).each do |i|
       tuple = coords_array[i]
       start_point = tuple[0]
       end_point = tuple[1]
-      draw = Magick::Draw.new
-      draw.stroke_width(3)
-      draw.fill_opacity(0)
 
       if start_point[0] == 'clear'
         # Open up a new blank canvas for the clear command
@@ -108,13 +108,14 @@ class AudioEncoding < ActiveRecord::Base
           self.background_color = 'white'
         end 
         # Try to prevent odd gray lines over background
+        draw = Magick::Draw.new
+        draw.stroke_width(3)
+        draw.fill_opacity(0)
         draw.stroke('white')
         draw.fill('white')
         draw.circle(0, 0, 3, 3)
         draw.draw(canvas)
       else
-        draw.stroke('blue')
-        draw.fill('blue')
         # draw.circle(coords[0].to_i, coords[1].to_i, coords[0].to_i, coords[1].to_i + 3)
       end
       
@@ -123,6 +124,12 @@ class AudioEncoding < ActiveRecord::Base
         frame = frame + 1
         filenum = "%08d" % frame
         canvas.write("#{working_dir}/#{filenum}.png")
+        
+        draw = Magick::Draw.new
+        draw.stroke_width(3)
+        draw.fill_opacity(0)
+        draw.stroke('blue')
+        draw.fill('blue')
       end
       
       # [[71,66,378],[72,66,396]] , [[72,66,397],[76,70,412]] , ... ]
@@ -149,6 +156,12 @@ class AudioEncoding < ActiveRecord::Base
         filenum = "%08d" % frame
         canvas.write("#{working_dir}/#{filenum}.png")
         last_drawn_point = next_point
+        
+        draw = Magick::Draw.new
+        draw.stroke_width(3)
+        draw.fill_opacity(0)
+        draw.stroke('blue')
+        draw.fill('blue')
       end
         
         
@@ -160,7 +173,10 @@ class AudioEncoding < ActiveRecord::Base
         frame = frame + 1
         filenum = "%08d" % frame
         canvas.write("#{working_dir}/#{filenum}.png")
-      
+        draw = Magick::Draw.new
+        draw.stroke_width(3)
+        draw.fill_opacity(0)
+
       #   end_point timestamp < 1 frame
       else # end_point[2] < ((frame+1) * MILLISECONDS_PER_FRAME)
         if start_point[0] != 'clear'

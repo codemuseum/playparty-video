@@ -2,6 +2,7 @@
 
 <table>
   <tr>
+    <th>ID</th>
     <th>Server audio</th>
     <th>Original url</th>
     <th>Mins To Complete</th>
@@ -25,6 +26,7 @@
 
 <% @audio_encodings.each do |audio_encoding| %>
   <tr>
+    <td><%=h audio_encoding.id %></td>
     <td><%=h audio_encoding.server_audio_id %></td>
     <td><%=h audio_encoding.original_url %></td>
     <td><% if audio_encoding.completed_at %><%= (audio_encoding.completed_at - audio_encoding.started_download)/60.000 %><% end %></td>
